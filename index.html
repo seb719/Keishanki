@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>傾斜ん機 - 立場別精算計算機</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <h1 class="logo">傾斜ん機</h1>
+      <p class="tagline">立場を考慮した金額精算のための計算機</p>
+    </header>
+
+    <main class="main">
+      <div class="main-left">
+      <section class="section inputs-section">
+        <h2>基本設定</h2>
+        
+        <div class="input-group">
+          <label for="total">合計金額（円）</label>
+          <input type="number" id="total" placeholder="例: 50000" min="1" value="50000">
+        </div>
+
+        <div class="input-row">
+          <div class="input-group">
+            <label for="multiplier">最上位 ÷ 最下位 の倍率 (n)</label>
+            <input type="number" id="multiplier" placeholder="例: 2" min="1" step="0.1" value="2">
+          </div>
+          <div class="input-group">
+            <label for="differential">定額差分 y（円）<span class="hint">※未入力で推奨値を使用</span></label>
+            <input type="number" id="differential" placeholder="推奨値" min="0" step="100">
+          </div>
+        </div>
+
+        <div class="recommendation" id="recommendation">
+          <span class="recommendation-label">推奨定額差分:</span>
+          <span class="recommendation-value" id="recommendedY">—</span>
+          <span class="recommendation-unit">円</span>
+        </div>
+      </section>
+
+      <section class="section positions-section">
+        <h2>役職と人数</h2>
+        <p class="section-desc">上から順に、役職名と人数を入力してください（1行目が最上位）</p>
+        
+        <div class="positions-editor" id="positionsEditor">
+          <div class="position-row" data-rank="0" draggable="true">
+            <span class="drag-handle" aria-label="並び替え">⋮⋮</span>
+            <span class="rank-badge">No.1</span>
+            <input type="text" class="position-name" placeholder="役職名（例: 部長）" value="部長">
+            <input type="number" class="position-count" placeholder="人数" min="0" value="1">
+            <button type="button" class="btn-remove" aria-label="削除">×</button>
+          </div>
+          <div class="position-row" data-rank="1" draggable="true">
+            <span class="drag-handle" aria-label="並び替え">⋮⋮</span>
+            <span class="rank-badge">No.2</span>
+            <input type="text" class="position-name" placeholder="役職名（例: 課長）" value="課長">
+            <input type="number" class="position-count" placeholder="人数" min="0" value="2">
+            <button type="button" class="btn-remove" aria-label="削除">×</button>
+          </div>
+          <div class="position-row" data-rank="2" draggable="true">
+            <span class="drag-handle" aria-label="並び替え">⋮⋮</span>
+            <span class="rank-badge">No.3</span>
+            <input type="text" class="position-name" placeholder="役職名（例: 社員）" value="社員">
+            <input type="number" class="position-count" placeholder="人数" min="0" value="3">
+            <button type="button" class="btn-remove" aria-label="削除">×</button>
+          </div>
+          <div class="position-row" data-rank="3" draggable="true">
+            <span class="drag-handle" aria-label="並び替え">⋮⋮</span>
+            <span class="rank-badge">No.4</span>
+            <input type="text" class="position-name" placeholder="役職名（例: 新入社員）" value="新入社員">
+            <input type="number" class="position-count" placeholder="人数" min="0" value="1">
+            <button type="button" class="btn-remove" aria-label="削除">×</button>
+          </div>
+        </div>
+
+        <button type="button" class="btn-add" id="btnAddPosition">+ 役職を追加</button>
+      </section>
+      </div>
+
+      <div class="main-right">
+      <section class="section results-section">
+        <div class="results-header">
+          <h2>精算結果</h2>
+          <button type="button" class="btn-copy" id="btnCopyResult" title="メモにコピー">📋</button>
+        </div>
+        
+        <div class="results-summary" id="resultsSummary">
+          <div class="summary-item">
+            <span class="summary-label">最下位の支払い</span>
+            <span class="summary-value" id="baseAmount">—</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">実効倍率</span>
+            <span class="summary-value" id="effectiveMultiplier">—</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">計算合計</span>
+            <span class="summary-value" id="calculatedTotal">—</span>
+          </div>
+        </div>
+
+        <div class="results-table-wrap">
+          <table class="results-table">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>役職</th>
+                <th>人数</th>
+                <th>1人あたり</th>
+                <th>小計</th>
+              </tr>
+            </thead>
+            <tbody id="resultsBody">
+              <!-- 動的生成 -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="result-message" id="resultMessage"></div>
+      </section>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <p>傾斜ん機 — 立場別精算計算機</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
